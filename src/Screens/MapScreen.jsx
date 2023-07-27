@@ -1,9 +1,14 @@
 import React from "react";
+import { useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-export const MapScreen = ({ route }) => {
+const MapScreen = ({ route, navigation }) => {
   const { longitude, latitude } = route.params.location;
+
+  useEffect(() => {
+    navigation.setOptions({ tabBarStyle: { display: "none" } });
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -15,6 +20,7 @@ export const MapScreen = ({ route }) => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        mapType="standard"
         minZoomLevel={1}
       >
         <Marker title="Ти тут" coordinate={{ longitude, latitude }} />
@@ -22,6 +28,8 @@ export const MapScreen = ({ route }) => {
     </View>
   );
 };
+
+export default MapScreen;
 
 const styles = StyleSheet.create({
   container: {

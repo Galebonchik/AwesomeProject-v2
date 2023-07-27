@@ -9,9 +9,14 @@ import {
   Text,
   Dimensions,
   FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
 } from "react-native";
-
+import { Camera } from "expo-camera";
+import * as Location from "expo-location";
 import { Feather, AntDesign } from "@expo/vector-icons";
+import * as MediaLibrary from "expo-media-library";
+import { TextInput } from "react-native-gesture-handler";
 
 import { postsScreenArray } from "../data/posts";
 
@@ -74,12 +79,13 @@ const PostsScreen = () => {
               <View style={styles.userCardInformation}>
                 <TouchableOpacity
                   style={styles.wrap}
-                  onPress={() => navigation.navigate("Коментарі")}
+                  onPress={() => navigation.navigate("CommentsScreen")}
                 >
                   <Feather name="message-circle" size={24} color="#FF6C00" />
                   {/* <Message /> */}
                   <Text style={styles.textStatistic}>{item.comments}</Text>
                 </TouchableOpacity>
+
                 <View style={{ ...styles.wrap, marginLeft: 24 }}>
                   <AntDesign name="like2" size={24} color="#FF6C00" />
                   {/* <Like /> */}
@@ -87,9 +93,18 @@ const PostsScreen = () => {
                 </View>
               </View>
               <View style={styles.wrap}>
-                <AntDesign name="enviromento" size={24} color="#BDBDBD" />
-                {/* <Location /> */}
-                <Text style={styles.textStatistic}>{item.location}</Text>
+                <TouchableOpacity
+                  style={styles.wrap}
+                  onPress={() =>
+                    navigation.navigate("MapScreen", {
+                      location: item.location,
+                    })
+                  }
+                >
+                  <AntDesign name="enviromento" size={24} color="#BDBDBD" />
+                  {/* <Location /> */}
+                  <Text style={styles.textStatistic}>{item.location}</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>

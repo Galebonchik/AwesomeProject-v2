@@ -20,7 +20,7 @@ import { TextInput } from "react-native-gesture-handler";
 
 import { commentPostArray } from "../data/posts";
 
-export const CommentsScreen = () => {
+const CommentsScreen = () => {
   const [windowWidth, setWindowWidth] = useState(
     Dimensions.get("window").width
   );
@@ -76,7 +76,7 @@ export const CommentsScreen = () => {
           <View style={styles.containerHeader}>
             <Image
               style={styles.commentImage}
-              source={require("../image/sunset.jpg")}
+              source={require("../Images/sunset.jpg")}
             />
           </View>
         }
@@ -120,6 +120,8 @@ export const CommentsScreen = () => {
     </SafeAreaView>
   );
 };
+
+export default CommentsScreen;
 
 const styles = StyleSheet.create({
   container: {

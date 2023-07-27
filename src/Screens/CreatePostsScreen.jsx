@@ -25,8 +25,7 @@ const BottomTabs = createBottomTabNavigator();
 
 const CreatePost = () => {
   const navigation = useNavigation();
-
-  // Створення станів за допомогою useState хука
+  const [posts, setPosts] = useState([]);
   const [postPhoto, setPostPhoto] = useState(null);
   const [photoName, setPhotoName] = useState("");
   const [photoLocationName, setPhotoLocationName] = useState("");
@@ -97,7 +96,7 @@ const CreatePost = () => {
       locationName: photoLocationName,
       geoLocation: currentGeoLocation,
     };
-    posts.unshift(data);
+    setPosts((prevPosts) => [data, ...prevPosts]);
     clearData();
     navigation.navigate("PostsScreen");
   };
