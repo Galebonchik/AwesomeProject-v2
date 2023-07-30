@@ -5,6 +5,9 @@ import * as Location from "expo-location";
 import { FontAwesome, EvilIcons, Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUID } from "../redux/authSelectors";
+import { addPost } from "../redux/posts/postsOperations";
 import {
   View,
   Text,
@@ -24,6 +27,8 @@ import posts from "../data/posts";
 const BottomTabs = createBottomTabNavigator();
 
 const CreatePost = () => {
+  const dispatch = useDispatch();
+  const uid = useSelector(selectUID);
   const navigation = useNavigation();
   const [posts, setPosts] = useState([]);
   const [postPhoto, setPostPhoto] = useState(null);
@@ -32,6 +37,14 @@ const CreatePost = () => {
   const [hasPermission, setHasPermission] = useState(null);
   const [currentGeoLocation, setCurrentGeoLocation] = useState({});
   const cameraRef = useRef(null);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [comment, setComment] = useState("");
+  const [locationName, setLocationName] = useState("");
+
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
 
   useEffect(() => {
     (async () => {
@@ -131,6 +144,11 @@ const CreatePost = () => {
               </TouchableOpacity>
             </Camera>
           )}
+          <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? -165 : -165}
+          ></KeyboardAvoidingView>
           <TouchableOpacity onPress={uploadPhoto}>
             <Text style={styles.imageText}>
               {postPhoto ? "Редагувати фото" : "Завантажте фото"}

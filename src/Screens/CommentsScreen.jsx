@@ -19,8 +19,17 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 
 import { commentPostArray } from "../data/posts";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser, selectUID } from "../redux/authSelectors";
+import { selectPosts } from "../redux/posts/postsSelectors";
+import { addComment } from "../redux/posts/postsOperations";
 
 const CommentsScreen = () => {
+  const dispatch = useDispatch();
+  const { name } = useSelector(selectUser);
+  const uid = useSelector(selectUID);
+  const { post } = useSelector(selectPosts);
+  const [message, setMessage] = useState("");
   const [windowWidth, setWindowWidth] = useState(
     Dimensions.get("window").width
   );

@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser, selectUID } from "../redux/authSelectors";
+import { selectPosts } from "../redux/posts/postsSelectors";
+import { fetchAllPosts } from "../redux/posts/postsOperations";
 import {
   TouchableOpacity,
   StyleSheet,
@@ -24,6 +28,9 @@ import UserAvatar from "../Images/userAvatar.jpg";
 
 const PostsScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
+  const uid = useSelector(selectUID);
 
   const [windowWidth, setWindowWidth] = useState(
     Dimensions.get("window").width

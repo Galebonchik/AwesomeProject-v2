@@ -19,9 +19,12 @@ import {
 import { Octicons } from "@expo/vector-icons";
 
 import Bg from "../Images/bg-image.png";
+import { useDispatch } from "react-redux";
+import { register } from "../redux/authOperations";
 
 const RegistrationScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [login, setLogin] = useState("");
   const [focusLogin, setFocusLogin] = useState(false);
@@ -72,6 +75,13 @@ const RegistrationScreen = () => {
 
     Alert.alert(`${login}, успішно зареєстровані!`);
     console.log("login: " + login, "email: " + email, "password: " + password);
+    dispatch(
+      register({
+        login,
+        email,
+        password,
+      })
+    );
     setLogin("");
     setEmail("");
     setPassword("");
@@ -125,6 +135,7 @@ const RegistrationScreen = () => {
                     }}
                     onFocus={() => setFocusLogin(true)}
                     onBlur={() => setFocusLogin(false)}
+                    type="text"
                     value={login}
                     placeholder="Логін"
                     cursorColor={"#BDBDBD"}
@@ -139,6 +150,7 @@ const RegistrationScreen = () => {
                     onFocus={() => setFocusEmail(true)}
                     onBlur={() => setFocusEmail(false)}
                     value={email}
+                    type="email"
                     placeholder="Адреса електронної пошти"
                     cursorColor={"#BDBDBD"}
                     placeholderTextColor={"#BDBDBD"}
@@ -154,6 +166,7 @@ const RegistrationScreen = () => {
                     onBlur={() => setFocusPassword(false)}
                     value={password}
                     placeholder="Пароль"
+                    type="password"
                     cursorColor={"#BDBDBD"}
                     placeholderTextColor={"#BDBDBD"}
                     secureTextEntry={isPasswordHidden}

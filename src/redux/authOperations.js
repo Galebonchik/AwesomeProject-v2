@@ -1,78 +1,91 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { auth } from "../../config";
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   updateProfile,
-  onAuthStateChanged,
   signOut,
-} from 'firebase/auth';
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "firebase/auth";
 
-import { Alert } from 'react-native';
+const register = createAsyncThunk(
+  "auth/registerUser",
+  async (credentials, { rejectWithValue }) => {
+    const { name, email, password } = credentials;
 
-import { auth } from '../firebase/config';
-
-import { authSlice } from './authSlice';
-
-const { updateUserProfile, authStateChange, authSignOut } = authSlice.actions;
-
-export const authSignUpUser =
-  ({ login, email, password, avatarImage }) =>
-  async dispatch => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-
-      await updateProfile(auth.currentUser, {
-        displayName: login,
-        photoURL: avatarImage,
-      });
-
-      const { uid, displayName, photoURL } = auth.currentUser;
-
-      dispatch(
-        updateUserProfile({
-          userId: uid,
-          login: displayName,
-          email,
-          avatarImage: photoURL,
-        })
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
       );
+
+      if (!response.user.displayName) {
+        await updateProfile(auth.currentUser, { displayName: name });
+      }
+
+      const credentials = {
+        user: { name: response.user.displayName, email: response.user.email },
+        uid: response.user.uid,
+      };
+
+      return credentials;
     } catch (error) {
-      Alert.alert(error.message);
+      console.log("1: ", error.message);
+      return rejectWithValue(error.message);
     }
-  };
-export const authSignInUser =
-  ({ email, password }) =>
-  async (dispatch, getState) => {
+  }
+);
+
+const logIn = createAsyncThunk(
+  "auth/logInUser",
+  async (credentials, { rejectWithValue }) => {
+    const { email, password } = credentials;
+
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      const response = await signInWithEmailAndPassword(auth, email, password);
+
+      const credentials = {
+        user: { name: response.user.displayName, email: response.user.email },
+        uid: response.user.uid,
+      };
+
+      return credentials;
     } catch (error) {
-      Alert.alert("Error! Email or password doesn't match!");
+      console.log("2: ", error.message);
+      return rejectWithValue(error.message);
     }
-  };
-export const authSignOutUser = () => async (dispatch, getState) => {
+  }
+);
+
+const logOut = createAsyncThunk(
+  "auth/logOutUser",
+  async (_, { rejectWithValue }) => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.log("3: ", error.message);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+const checkUser = () => async (dispatch, _) => {
   try {
-    await signOut(auth);
-    dispatch(authSignOut());
+    onAuthStateChanged(auth, (user) => {
+      if (!user) return;
+
+      const credentials = {
+        user: { name: user.displayName, email: user.email },
+        uid: user.uid,
+      };
+
+      dispatch(logIn(credentials));
+    });
   } catch (error) {
-    Alert.alert(error.message);
+    console.log("4: ", error.message);
+    return rejectWithValue(error.message);
   }
 };
 
-export const authStateChangeUser = () => async dispatch => {
-  await onAuthStateChanged(auth, user => {
-    try {
-      if (user) {
-        const userUpdateProfile = {
-          email: user.email,
-          avatarImage: user.photoURL,
-          login: user.displayName,
-          userId: user.uid,
-        };
-
-        dispatch(updateUserProfile(userUpdateProfile));
-        dispatch(authStateChange({ stateChange: true }));
-      }
-    } catch (error) {
-      Alert.alert(error.message);
-    }
-  });
-};
+export { register, logIn, logOut, checkUser };

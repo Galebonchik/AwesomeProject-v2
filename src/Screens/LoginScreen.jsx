@@ -16,11 +16,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
+import { useDispatch } from "react-redux";
+import { logIn } from "../redux/authOperations";
 
 import Bg from "../Images/bg-image.png";
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [focusEmail, setIsFocusEmail] = useState(false);
@@ -66,6 +69,12 @@ const LoginScreen = () => {
 
     Alert.alert(`${email}, успішно увійшли!`);
     console.log("email" - email, "password" - password);
+    dispatch(
+      logIn({
+        email,
+        password,
+      })
+    );
 
     setEmail("");
     setPassword("");
